@@ -8,7 +8,7 @@ const string = process.env.MONGODB_URI
 
 try{
     mongoose.connect(string)
-    signale.success('Db: connected')
+    signale.success('Mongo: connected')
 }catch(err){
     signale.error(`Db: error ${err}`)
 }
