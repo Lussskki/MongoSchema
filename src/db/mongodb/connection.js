@@ -7,10 +7,7 @@ import dotenv from 'dotenv'
 const string = process.env.MONGODB_URI
 
 try{
-    mongoose.connect(string,{
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      })
+    mongoose.connect(string)
     signale.success('Mongo: connected')
 }catch(err){
     signale.error(`Db: error ${err}`)

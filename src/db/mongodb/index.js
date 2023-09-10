@@ -22,13 +22,12 @@ router.get('/',async (req,res)=>{
 //http:add method, sign up 
 router.post('/signup', async (req,res)=>{
         const {email,password} = req.body
+        const hashedPassword = await bcrypt.hash(password,10) 
     try{ 
         const exisitingUser = await User.findOne({email})
     if(exisitingUser){
         return res.status(400).json({error: 'email already registered'})
     }  
-    //hashed password 
-    const hashedPassword = await bcrypt.hash(password,10) 
     const newUser = new User({
         email,
         password: hashedPassword,
@@ -44,10 +43,15 @@ router.post('/signup', async (req,res)=>{
 //http: update method
 router.put('/signup/:id', async (req, res)=>{
         const {id} = req.params
-        const {email,password} = req.body    
+        const {email,password} = req.body
+        const hashedPassword = await bcrypt.hash(password,10)     
     try{ 
-        const user = await User.findByIdAndUpdate(id,{email,password},{new: true})
-        res.send(user)    
+        const user = await User.findByIdAndUpdate(id,{email,hashedPassword},{new: true})
+        if (!user) {
+        return res.status(404).json({ message: 'User not found' })
+    } 
+        await user.save()
+        return res.status(200).json({message: 'Put: updated'})    
     }catch(err){
         signale.error(`Put: error-${err}`)
         res.status(500).json({message:`Put: error- ${err}`})
